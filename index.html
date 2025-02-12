@@ -105,11 +105,6 @@
             color: #4CAF50;
         }
 
-        .winner-list li:hover {
-            background-color: #eafaf1;
-            cursor: pointer;
-        }
-
         .winner-list li .date {
             font-size: 12px;
             color: #999;
@@ -158,53 +153,33 @@
             <p>Congratulations! You've won a prize. To get your code, please email us.</p>
             <p><strong>Email:</strong> mc.rpg.gamez@gmail.com</p>
             <p><strong>Subject:</strong> Redeem code</p>
+            <p>Upload the <strong>index.html</strong> file of this game included in the email to get the redeem code.</p>
             <p>Winner proof will also be provided upon request.</p>
             <p><strong>Screenshot this page to show as proof!</strong></p>
-            <p><strong>Also, download and attach this HTML file in your email to receive the redeem code.</strong></p>
         </div>
 
         <!-- Winners List -->
         <div class="winners">
             <h3>Winners List (All Events):</h3>
             <ul class="winner-list" id="winnersList">
-                <!-- Winners will appear here -->
+                <li>1.) JD (used ai)</li>
             </ul>
         </div>
     </div>
 
-    <!-- Load the CryptoJS library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1-crypto-js.min.js"></script>
+    <!-- Load CryptoJS -->
+    <script src="crypto-js.js"></script>
 
     <script>
-        // Encrypted Words
-        const firstEncryptedWord = "U2FsdGVkX1+RndAXZ57lyqI35sQuMW2UVRs64tQGIO8j6raYzrptgx8VRpxaOiexuvHv8Ptz5jD6ybsmuZVpTw==";
-        const secondEncryptedWord = "U2FsdGVkX19sXpwpqfSsn5U11JHlwme/x1uWAHQKqsI=";
-        
-        // Decrypt function
-        function decryptWord(encryptedWord) {
-            const decryptedBytes = CryptoJS.AES.decrypt(encryptedWord, 'secretkey');
-            return decryptedBytes.toString(CryptoJS.enc.Utf8);
-        }
+        const encryptedFirstWord = "U2FsdGVkX1+RndAXZ57lyqI35sQuMW2UVRs64tQGIO8j6raYzrptgx8VRpxaOiexuvHv8Ptz5jD6ybsmuZVpTw==";
+        const encryptedSecondWord = "U2FsdGVkX19sXpwpqfSsn5U11JHlwme/x1uWAHQKqsI=";
+        const decryptionKey = "secretkey";
 
-        // Initialize winners with JD in the list
-        let winners = [
-            { name: "JD (used AI)", date: "2025-02-12 12:00:00" } // JD should always be listed first
-        ];
-
-        // Display initial winners list
-        const winnersList = document.getElementById("winnersList");
-        winners.forEach(winner => {
-            const winnerItem = document.createElement("li");
-            winnerItem.innerHTML = `${winner.name} <span class="date">(${winner.date})</span>`;
-            winnersList.appendChild(winnerItem);
-        });
-
-        // Function to check first word
         function checkFirstWord() {
             const userGuess = document.getElementById("firstGuess").value.trim().toLowerCase();
-            const decryptedFirstWord = decryptWord(firstEncryptedWord).toLowerCase();
+            const decryptedFirstWord = CryptoJS.AES.decrypt(encryptedFirstWord, decryptionKey).toString(CryptoJS.enc.Utf8);
 
-            if (userGuess === decryptedFirstWord) {
+            if (userGuess === decryptedFirstWord.toLowerCase()) {
                 alert("Correct first word! Please enter the second word.");
                 document.getElementById("secondWordScreen").style.display = "block";
             } else {
@@ -212,51 +187,17 @@
             }
         }
 
-        // Function to check second word
         function checkSecondWord() {
             const userSecondGuess = document.getElementById("secondGuess").value.trim().toLowerCase();
-            const decryptedSecondWord = decryptWord(secondEncryptedWord).toLowerCase();
+            const decryptedSecondWord = CryptoJS.AES.decrypt(encryptedSecondWord, decryptionKey).toString(CryptoJS.enc.Utf8);
 
-            if (userSecondGuess === decryptedSecondWord) {
+            if (userSecondGuess === decryptedSecondWord.toLowerCase()) {
                 alert("Correct second word! Please enter your name to claim your prize.");
                 document.getElementById("secondWordScreen").style.display = "none";
                 document.getElementById("nameScreen").style.display = "block";
             } else {
                 alert("Wrong second word! Try again.");
             }
-        }
-
-        // Function to record winner's name and show prize screen
-        function recordWinner() {
-            const userName = document.getElementById("userName").value.trim();
-
-            if (userName) {
-                const winnerDate = new Date().toLocaleString();
-                winners.push({ name: userName, date: winnerDate });
-                alert(`${userName}, you've won a prize!`);
-                document.getElementById("nameScreen").style.display = "none";
-                document.getElementById("prizeScreen").style.display = "block";
-
-                // Update Winners List on the page
-                const winnersList = document.getElementById("winnersList");
-                const newWinner = document.createElement("li");
-                newWinner.innerHTML = `${userName} <span class="date">(${winnerDate})</span>`;
-                winnersList.appendChild(newWinner);
-
-                // Trigger the download of the index.html file
-                downloadHTML();
-            } else {
-                alert("Please enter your name.");
-            }
-        }
-
-        // Function to trigger the download of the HTML file
-        function downloadHTML() {
-            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "index.html";
-            link.click();
         }
     </script>
 </body>
