@@ -110,22 +110,6 @@
             color: #999;
         }
 
-        .highlight {
-            color: red;
-            font-weight: bold;
-        }
-
-        .prize-info {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .winners .winner-list {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
         .event-over {
             color: red;
             font-weight: bold;
@@ -172,25 +156,28 @@
         </div>
     </div>
 
-    <!-- Load CryptoJS -->
-    <script src="crypto-js.js"></script>
-
     <script>
-        const encryptedFirstWord = "U2FsdGVkX1+RndAXZ57lyqI35sQuMW2UVRs64tQGIO8j6raYzrptgx8VRpxaOiexuvHv8Ptz5jD6ybsmuZVpTw==";
-        const encryptedSecondWord = "U2FsdGVkX19sXpwpqfSsn5U11JHlwme/x1uWAHQKqsI=";
-        const decryptionKey = "secretkey";
-
         function loadWinners() {
             const storedWinners = localStorage.getItem("winners");
             if (storedWinners) {
                 const winnersList = document.getElementById("winnersList");
-                JSON.parse(storedWinners).forEach((winner, index) => {
+                const winnersArray = JSON.parse(storedWinners);
+
+                winnersArray.forEach((winner, index) => {
                     const li = document.createElement("li");
                     li.innerHTML = `${index + 2}.) ${winner.name} <span class="date">(${winner.date})</span>`;
                     winnersList.appendChild(li);
+
+                    // Check if Nathan is the second winner
+                    if (winner.name.toLowerCase() === "nathan") {
+                        document.title += " (Event Over)";
+                        disableGame();
+                        const eventOverMessage = document.createElement("p");
+                        eventOverMessage.className = "event-over";
+                        eventOverMessage.textContent = "Event is over. Congratulations to Nathan!";
+                        document.querySelector('.container').appendChild(eventOverMessage);
+                    }
                 });
-                document.title += " (Event Over)";
-                disableGame();
             }
         }
 
@@ -198,34 +185,17 @@
             document.querySelectorAll("input, button").forEach(el => el.disabled = true);
         }
 
-        function checkFirstWord() {
-            const userGuess = document.getElementById("firstGuess").value.trim().toLowerCase();
-            const decryptedFirstWord = CryptoJS.AES.decrypt(encryptedFirstWord, decryptionKey).toString(CryptoJS.enc.Utf8);
-
-            if (userGuess === decryptedFirstWord.toLowerCase()) {
-                alert("Correct first word! Please enter the second word.");
-                document.getElementById("secondWordScreen").style.display = "block";
-            } else {
-                alert("Wrong first word! Try again.");
-            }
-        }
-
-        function checkSecondWord() {
-            const userSecondGuess = document.getElementById("secondGuess").value.trim().toLowerCase();
-            const decryptedSecondWord = CryptoJS.AES.decrypt(encryptedSecondWord, decryptionKey).toString(CryptoJS.enc.Utf8);
-
-            if (userSecondGuess === decryptedSecondWord.toLowerCase()) {
-                document.getElementById("nameScreen").style.display = "block";
-            } else {
-                alert("Wrong second word! Try again.");
-            }
-        }
-
         function recordWinner() {
             const userName = document.getElementById("userName").value.trim();
             if (userName) {
                 const newWinner = { name: userName, date: new Date().toLocaleString() };
-                localStorage.setItem("winners", JSON.stringify([newWinner]));
+                
+                const storedWinners = localStorage.getItem("winners");
+                let winnersArray = storedWinners ? JSON.parse(storedWinners) : [];
+
+                winnersArray.push(newWinner);
+                localStorage.setItem("winners", JSON.stringify(winnersArray));
+                
                 alert(`${userName}, you've won a prize! Screenshot this code "Dino" and attach it and email it to mc.rpg.gamez@gmail.com`);
                 location.reload();
             }
