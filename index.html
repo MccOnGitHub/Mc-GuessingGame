@@ -50,18 +50,29 @@
             color: #2c3e50;
             font-weight: bold;
         }
+
+        .subtext {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .prize-info {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mc's Guess the Word for a Prize! 🗣️🔥</h1>
-        <p>Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
-        <p>Current Prize: COD POINTS (CP) </p>
+        <h1>Guess the Word</h1>
+        <p class="subtext">Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
+        <p class="prize-info">Current Prize: COD POINTS (CP)</p>
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
-        <p id="prize">UYYY! NAYS ONEEE HAHAHAHAHA </p> 
-        <p>(screenshot pag naukha mo na )</p> 
-        <p>eto na code mo: <strong>WIN2025</strong></p>
+        <p id="prize">Congratulations! Your prize code is: <strong>WIN2025</strong></p>
     </div>
 
     <script>
