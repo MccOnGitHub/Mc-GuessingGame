@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=devie-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mc's Guess the Word for a Prize! 🗣️🔥</title>
     <style>
         body {
@@ -87,17 +87,20 @@
         <p class="prize-info">Current Prize: COD POINTS (CP)</p>
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
-        <p id="prize">Congratulations! Nays one! eto redeem code mo: <strong>6364343370575049</strong></p>
+        <p id="prize"></p>
         <p id="link">Redeem your prize <a href="https://shop.garena.ph/" target="_blank">here</a>.</p>
     </div>
 
     <script>
         const randomChar = "absolute value inequality"; // Hidden secret phrase
-        
+        const encodedCode = "NjM2NDM0MzM3MDU3NTA0OQ=="; // Base64 encoded redeem code
+
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             
             if (userGuess === randomChar.toLowerCase()) {
+                const redeemCode = atob(encodedCode); // Decode the code
+                document.getElementById("prize").innerHTML = `Congratulations! Nays one! eto redeem code mo: <strong>${redeemCode}</strong>`;
                 document.getElementById("prize").style.display = "block";
                 document.getElementById("link").style.display = "block";
             } else {
