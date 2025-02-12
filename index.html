@@ -63,6 +63,21 @@
             font-weight: bold;
             margin-top: 10px;
         }
+
+        #link {
+            display: none;
+            margin-top: 15px;
+        }
+
+        #link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -73,15 +88,18 @@
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
         <p id="prize">Congratulations! Nays one! eto redeem code mo: <strong>6364343370575049</strong></p>
+        <p id="link">Redeem your prize <a href="https://shop.garena.ph/" target="_blank">here</a>.</p>
     </div>
 
     <script>
+        const randomValue = "fudgel"; // Hidden secret word
+        
         function checkGuess() {
-            const correctWord = "again"; // Change this to your desired secret word
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             
-            if (userGuess === correctWord) {
+            if (userGuess === randomValue) {
                 document.getElementById("prize").style.display = "block";
+                document.getElementById("link").style.display = "block";
             } else {
                 alert("Wrong guess! Try again.");
             }
