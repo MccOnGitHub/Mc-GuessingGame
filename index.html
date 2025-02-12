@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mc's Guess the Word for a Prize! 🗣️🔥</title>
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body {
             display: flex;
@@ -23,7 +22,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        input[type="text"], input[type="email"] {
+        input[type="text"] {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
@@ -46,9 +45,11 @@
             background-color: #45a049;
         }
 
-        #prize, #email-section {
+        #prize {
             display: none;
             margin-top: 20px;
+            color: #2c3e50;
+            font-weight: bold;
         }
 
         .subtext {
@@ -87,65 +88,50 @@
         <p class="prize-info">Current Prize: COD POINTS (CP)</p>
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
-        
-        <div id="email-section">
-            <input type="email" id="email" placeholder="Enter your email to receive the prize">
-            <button onclick="sendPrize()">Send Prize</button>
-        </div>
-
         <p id="prize"></p>
-        <p id="link">Redeem your prize <a href="https://shop.garena.ph/" target="_blank">here</a>.</p>
     </div>
 
     <script>
-        // Initialize EmailJS with your Public Key
-        emailjs.init("kDNFc7O25a_8wOvGv");
-
+        const randomChar = "pneumonoultramicroscopicsilicovolcanoconiosis"; // Secret word
         const encryptedCode = "d1hCdlJ5SUxDQW1QZktEVA=="; // Double-encrypted redeem code
         const secretWord = "hitler"; // Decryption key
+
+        // Check if the user already won before
+        window.onload = function() {
+            const storedCode = localStorage.getItem("redeemCode");
+            if (storedCode) {
+                displayPrize(storedCode);
+            }
+        };
 
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             
-            if (userGuess === "pneumonoultramicroscopicsilicovolcanoconiosis") {
-                document.getElementById("email-section").style.display = "block";
-                document.getElementById("prize").innerHTML = `Correct! Enter your email to receive the prize.`;
-                document.getElementById("prize").style.display = "block";
+            if (userGuess === randomChar.toLowerCase()) {
+                const decodedCode = atob(encryptedCode);
+                let redeemCode = '';
+                for (let i = 0; i < decodedCode.length; i++) {
+                    redeemCode += String.fromCharCode(decodedCode.charCodeAt(i) ^ secretWord.charCodeAt(i % secretWord.length));
+                }
+                
+                // Store the code in localStorage to show after redirection
+                localStorage.setItem("redeemCode", redeemCode);
+
+                // Redirect based on device type
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    window.location.href = "vnd.youtube://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
+                } else {
+                    window.location.href = "https://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
+                }
             } else {
                 alert("Wrong guess! Try again.");
             }
         }
 
-        function sendPrize() {
-            const email = document.getElementById("email").value;
-            
-            if (!email) {
-                alert("Please enter your email.");
-                return;
-            }
-
-            // Decrypt the code using the secret word
-            const decodedCode = atob(encryptedCode);
-            let redeemCode = '';
-            for (let i = 0; i < decodedCode.length; i++) {
-                redeemCode += String.fromCharCode(decodedCode.charCodeAt(i) ^ secretWord.charCodeAt(i % secretWord.length));
-            }
-
-            // Setup the template parameters
-            const templateParams = {
-                to_email: email,
-                code: redeemCode
-            };
-
-            // Send the email using EmailJS
-            emailjs.send("service_vqvhy6k", "template_yf53c3w", templateParams)
-            .then(function(response) {
-                alert("Prize sent to your email!");
-                console.log("SUCCESS:", response);
-            }, function(error) {
-                console.error('EmailJS Error:', error);
-                alert("Failed to send email. Check console for details.");
-            });
+        function displayPrize(redeemCode) {
+            document.getElementById("prize").innerHTML = `Congratulations! Here is your redeem code: <strong>${redeemCode}</strong>`;
+            document.getElementById("prize").style.display = "block";
         }
     </script>
 </body>
