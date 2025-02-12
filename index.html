@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mc's Guess the Word for a Prize! 🗣️🔥</title>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <style>
         body {
             display: flex;
@@ -20,8 +21,6 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 400px;
         }
 
         input[type="text"], input[type="email"] {
@@ -30,7 +29,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
             margin-bottom: 10px;
-            width: 100%;
+            width: 80%;
         }
 
         button {
@@ -47,116 +46,105 @@
             background-color: #45a049;
         }
 
-        #email-section, #decryption-section {
+        #prize, #email-section {
             display: none;
+            margin-top: 20px;
         }
 
-        .message {
-            color: #e67e22;
+        .subtext {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .prize-info {
+            font-size: 18px;
+            color: #e74c3c;
             font-weight: bold;
-            margin: 15px 0;
+            margin-top: 10px;
+        }
+
+        #link {
+            display: none;
+            margin-top: 15px;
+        }
+
+        #link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #link a:hover {
+            text-decoration: underline;
         }
     </style>
-    <!-- CryptoJS for AES Encryption/Decryption -->
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        (function() {
-            emailjs.init("14bDvyDywACODtaux"); // Your EmailJS User/Public Key
-        })();
-    </script>
 </head>
 <body>
     <div class="container">
         <h1>Mc's Guess the Word for a Prize! 🗣️🔥</h1>
-        <p>Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
-        <p><strong>Current Prize: COD POINTS (CP)</strong></p>
-        
+        <p class="subtext">Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
+        <p class="prize-info">Current Prize: COD POINTS (CP)</p>
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
         
-        <div id="decryption-section">
-            <p class="message">Request the decryption code from the owner to proceed!</p>
-            <input type="text" id="decryption-code" placeholder="Enter decryption code">
-            <button onclick="verifyDecryptionCode()">Submit Code</button>
-        </div>
-        
         <div id="email-section">
-            <h3>Congrats! Enter your email to receive the redeem code:</h3>
-            <input type="email" id="email" placeholder="Enter your email">
-            <button onclick="sendEmail()">Send Code</button>
+            <input type="email" id="email" placeholder="Enter your email to receive the prize">
+            <button onclick="sendPrize()">Send Prize</button>
         </div>
+
+        <p id="prize"></p>
+        <p id="link">Redeem your prize <a href="https://shop.garena.ph/" target="_blank">here</a>.</p>
     </div>
 
     <script>
-        // Secret word and encrypted code
-        const secretWord = "pneumonoultramicroscopicsilicovolcanoconiosis"; 
-        const encryptedCode = "U2FsdGVkX19d2QzS9D1WJ1kJ0v4H7sM5DGFuZ94+yUE="; 
-        const ownerDecryptionKey = "hitler"; // The private key only you know
+        // Initialize EmailJS with your Public Key
+        emailjs.init("kDNFc7O25a_8wOvGv");
 
-        // AES Decryption function
-        function decrypt(text, key) {
-            const bytes = CryptoJS.AES.decrypt(text, key);
-            return bytes.toString(CryptoJS.enc.Utf8);
-        }
+        const encryptedCode = "d1hCdlJ5SUxDQW1QZktEVA=="; // Double-encrypted redeem code
+        const secretWord = "hitler"; // Decryption key
 
-        // Check the guess for the secret word
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
-            if (userGuess === secretWord.toLowerCase()) {
-                alert("Correct! Request the decryption code from the owner.");
-                document.getElementById("decryption-section").style.display = "block";
+            
+            if (userGuess === "pneumonoultramicroscopicsilicovolcanoconiosis") {
+                document.getElementById("email-section").style.display = "block";
+                document.getElementById("prize").innerHTML = `Correct! Enter your email to receive the prize.`;
+                document.getElementById("prize").style.display = "block";
             } else {
                 alert("Wrong guess! Try again.");
             }
         }
 
-        // Verify the decryption code
-        function verifyDecryptionCode() {
-            const userCode = document.getElementById("decryption-code").value.trim();
-            if (userCode === ownerDecryptionKey) {
-                alert("Decryption code verified! Proceed to enter your email.");
-                document.getElementById("decryption-section").style.display = "none";
-                document.getElementById("email-section").style.display = "block";
-            } else {
-                alert("Incorrect decryption code! Generating warning file...");
-                generateWarningFile();
-            }
-        }
-
-        // Generate and download warning file
-        function generateWarningFile() {
-            const warningMessage = "Your device will self-destruct in 5 seconds.";
-            const blob = new Blob([warningMessage], { type: 'text/plain' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "warning.txt";
-            link.click();
-        }
-
-        // Send email using EmailJS
-        function sendEmail() {
+        function sendPrize() {
             const email = document.getElementById("email").value;
+            
             if (!email) {
                 alert("Please enter your email.");
                 return;
             }
 
-            // Decrypt the code using the secret key
-            const decryptedCode = decrypt(encryptedCode, ownerDecryptionKey);
+            // Decrypt the code using the secret word
+            const decodedCode = atob(encryptedCode);
+            let redeemCode = '';
+            for (let i = 0; i < decodedCode.length; i++) {
+                redeemCode += String.fromCharCode(decodedCode.charCodeAt(i) ^ secretWord.charCodeAt(i % secretWord.length));
+            }
 
+            // Setup the template parameters
             const templateParams = {
                 to_email: email,
-                code: decryptedCode
+                code: redeemCode
             };
 
+            // Send the email using EmailJS
             emailjs.send("service_vqvhy6k", "template_yf53c3w", templateParams)
             .then(function(response) {
-                alert("Redeem code sent to your email!");
+                alert("Prize sent to your email!");
+                console.log("SUCCESS:", response);
             }, function(error) {
-                alert("Failed to send email. Please try again.");
-                console.log('EmailJS Error:', error);
+                console.error('EmailJS Error:', error);
+                alert("Failed to send email. Check console for details.");
             });
         }
     </script>
