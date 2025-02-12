@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=devie-width, initial-scale=1.0">
     <title>Mc's Guess the Word for a Prize! 🗣️🔥</title>
     <style>
         body {
@@ -92,12 +92,12 @@
     </div>
 
     <script>
-        const randomValue = "absolute value inequality"; // Hidden secret word
+        const randomChar = "absolute value inequality"; // Hidden secret phrase
         
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             
-            if (userGuess === randomValue) {
+            if (userGuess === randomChar.toLowerCase()) {
                 document.getElementById("prize").style.display = "block";
                 document.getElementById("link").style.display = "block";
             } else {
