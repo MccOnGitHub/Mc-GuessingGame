@@ -19,7 +19,7 @@ https://mccongithub.github.io/Mc-GuessingGame/
 
 -----------"nothing follows"----------
 
-***List of GuessingGame winners!**
+***List of Guessing Game winners!**
 
 First Winner: JD (used ai to decode)
 
