@@ -125,6 +125,11 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
+        .event-over {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -175,6 +180,24 @@
         const encryptedSecondWord = "U2FsdGVkX19sXpwpqfSsn5U11JHlwme/x1uWAHQKqsI=";
         const decryptionKey = "secretkey";
 
+        function loadWinners() {
+            const storedWinners = localStorage.getItem("winners");
+            if (storedWinners) {
+                const winnersList = document.getElementById("winnersList");
+                JSON.parse(storedWinners).forEach((winner, index) => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `${index + 2}.) ${winner.name} <span class="date">(${winner.date})</span>`;
+                    winnersList.appendChild(li);
+                });
+                document.title += " (Event Over)";
+                disableGame();
+            }
+        }
+
+        function disableGame() {
+            document.querySelectorAll("input, button").forEach(el => el.disabled = true);
+        }
+
         function checkFirstWord() {
             const userGuess = document.getElementById("firstGuess").value.trim().toLowerCase();
             const decryptedFirstWord = CryptoJS.AES.decrypt(encryptedFirstWord, decryptionKey).toString(CryptoJS.enc.Utf8);
@@ -192,13 +215,23 @@
             const decryptedSecondWord = CryptoJS.AES.decrypt(encryptedSecondWord, decryptionKey).toString(CryptoJS.enc.Utf8);
 
             if (userSecondGuess === decryptedSecondWord.toLowerCase()) {
-                alert("Correct second word! Please enter your name to claim your prize.");
-                document.getElementById("secondWordScreen").style.display = "none";
                 document.getElementById("nameScreen").style.display = "block";
             } else {
                 alert("Wrong second word! Try again.");
             }
         }
+
+        function recordWinner() {
+            const userName = document.getElementById("userName").value.trim();
+            if (userName) {
+                const newWinner = { name: userName, date: new Date().toLocaleString() };
+                localStorage.setItem("winners", JSON.stringify([newWinner]));
+                alert(`${userName}, you've won a prize!`);
+                location.reload();
+            }
+        }
+
+        loadWinners();
     </script>
 </body>
 </html>
