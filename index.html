@@ -150,16 +150,13 @@
                     clearInterval(countdownInterval);
                     alert("Just kidding! But nice try. 😜");
                     localStorage.setItem('selfDestructed', true);
-
-                    const redirectUrl = "https://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
-                    window.open(redirectUrl, '_blank');
                 }
             }, 1000);
         }
 
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
-            const userKey = prompt("Request decryption code from the owner:");
+            const userKey = prompt("Guess second word (Clue: noun)");
 
             const userKeyArr = Array.from(userKey).map(char => char.charCodeAt(0));
 
@@ -173,22 +170,12 @@
 
                 if (userGuess === decryptedRandomChar.toLowerCase()) {
                     const redeemCode = decodeHidden(encryptedCode, secretSequence);
-                    localStorage.setItem('redeemCode', redeemCode);
-
-                    const redirectUrl = "https://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
-                    window.open(redirectUrl, '_blank');
+                    alert(`Congratulations! Your redeem code is: ${redeemCode}`);
                 } else {
                     alert("Wrong guess! Try again.");
                 }
             } catch (e) {
                 showSelfDestruct();
-            }
-        }
-
-        window.onload = function() {
-            const savedCode = localStorage.getItem('redeemCode');
-            if (savedCode) {
-                alert(`Welcome back! Your redeem code is: ${savedCode}`);
             }
         }
     </script>
