@@ -5,3 +5,4 @@ here i just do some random stuff
 https://mccongithub.github.io/Mc-GuessingGame/
 
 **if u know how to use github, yeah take the cod points its free just take it*
+im too lazy to copy the repository and hide the commits
