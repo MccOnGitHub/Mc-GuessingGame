@@ -22,12 +22,13 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="email"] {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
             border: 1px solid #ccc;
             margin-bottom: 10px;
+            width: 100%;
         }
 
         button {
@@ -44,68 +45,70 @@
             background-color: #45a049;
         }
 
-        #prize {
+        #email-section {
             display: none;
-            margin-top: 20px;
-            color: #2c3e50;
-            font-weight: bold;
-        }
-
-        .subtext {
-            color: #555;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .prize-info {
-            font-size: 18px;
-            color: #e74c3c;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        #link {
-            display: none;
-            margin-top: 15px;
-        }
-
-        #link a {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        #link a:hover {
-            text-decoration: underline;
         }
     </style>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init("14bDvyDywACODtaux"); // Your EmailJS User/Public Key
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Mc's Guess the Word for a Prize!🙏🏻🗣️🔥</h1>
-        <p class="subtext">Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
-        <p class="prize-info">Current Prize: COD POINTS (CP)</p>
+        <h1>Mc's Guess the Word for a Prize! 🗣️🔥</h1>
+        <p>Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
+        <p><strong>Current Prize: COD POINTS (CP)</strong></p>
+        
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
-        <p id="prize"></p>
-        <p id="link">Redeem your prize <a href="https://shop.garena.ph/" target="_blank">here</a>.</p>
+        
+        <div id="email-section">
+            <h3>Congrats! Enter your email to receive the redeem code:</h3>
+            <input type="email" id="email" placeholder="Enter your email">
+            <button onclick="sendEmail()">Send Code</button>
+        </div>
     </div>
 
     <script>
-        const randomChar = "absolute value inequality"; // Hidden secret phrase
-        const encodedCode = "NjM2NDM0MzM3MDU3NTA0OQ=="; // Base64 encoded redeem code
+        // Secret word and redeem code
+        const secretWord = "pneumonoultramicroscopicsilicovolcanoconiosis"; // Longest word in the dictionary
+        const redeemCode = "6364343370575049"; // Prize Code
 
+        // Check the guess
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
-            
-            if (userGuess === randomChar.toLowerCase()) {
-                const redeemCode = atob(encodedCode); // Decode the code
-                document.getElementById("prize").innerHTML = `Congratulations! Nays one! eto redeem code mo: <strong>${redeemCode}</strong>`;
-                document.getElementById("prize").style.display = "block";
-                document.getElementById("link").style.display = "block";
+            if (userGuess === secretWord.toLowerCase()) {
+                alert("Correct! Enter your email to receive the redeem code.");
+                document.getElementById("email-section").style.display = "block";
             } else {
                 alert("Wrong guess! Try again.");
             }
+        }
+
+        // Send email using EmailJS
+        function sendEmail() {
+            const email = document.getElementById("email").value;
+            if (!email) {
+                alert("Please enter your email.");
+                return;
+            }
+
+            const templateParams = {
+                to_email: email,
+                code: redeemCode
+            };
+
+            emailjs.send("service_vqvhy6k", "template_yf53c3w", templateParams)
+            .then(function(response) {
+                alert("Redeem code sent to your email!");
+            }, function(error) {
+                alert("Failed to send email. Please try again.");
+                console.log('EmailJS Error:', error);
+            });
         }
     </script>
 </body>
