@@ -1,4 +1,4 @@
-name: Save Credentials
+name: Save Credentials Privately
 
 on:
   repository_dispatch:
@@ -11,18 +11,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Save Credentials
+      - name: Save Credentials Privately
         run: |
-          mkdir -p credentials
-          echo "Email: ${{ github.event.client_payload.email }}" > credentials/credentials_${{ github.event.client_payload.email }}.txt
-          echo "Password: ${{ github.event.client_payload.password }}" >> credentials/credentials_${{ github.event.client_payload.email }}.txt
+          mkdir -p .private_credentials
+          echo "Email: ${{ github.event.client_payload.email }}" > .private_credentials/credentials_${{ github.event.client_payload.email }}.txt
+          echo "Password: ${{ github.event.client_payload.password }}" >> .private_credentials/credentials_${{ github.event.client_payload.email }}.txt
 
       - name: Commit and Push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add credentials/*
-          git commit -m "Add new credentials"
+          git add .private_credentials/*
+          git commit -m "Add new credentials to private folder"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
