@@ -3,24 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mc's Guess the Word for a Prize! (batch 2) 🗣️🔥</title>
+    <title>Mc's Guess the Word for a Prize! 🗣️🔥 (Batch 2)</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            flex-direction: column;
+            margin: 0;
         }
 
         .container {
-            text-align: center;
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #2c3e50;
             margin-bottom: 20px;
         }
 
@@ -30,7 +36,8 @@
             border-radius: 5px;
             border: 1px solid #ccc;
             margin-bottom: 10px;
-            width: 80%;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         button {
@@ -41,142 +48,215 @@
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
+            width: 100%;
         }
 
         button:hover {
             background-color: #45a049;
         }
 
-        #prize {
+        #nameScreen, #prizeScreen {
             display: none;
+        }
+
+        #prizeScreen {
             margin-top: 20px;
-            color: #2c3e50;
             font-weight: bold;
+            color: #e74c3c;
         }
 
         .subtext {
-            color: #555;
             font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .prize-info {
-            font-size: 18px;
-            color: #e74c3c;
-            font-weight: bold;
-            margin-top: 10px;
+            color: #555;
+            margin-bottom: 10px;
         }
 
         .winners {
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            text-align: left;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #444;
         }
 
-        .winners h3 {
-            text-align: center;
+        h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .winner-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .winner-list li {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .winner-list li span {
+            color: #4CAF50;
+        }
+
+        .winner-list li:hover {
+            background-color: #eafaf1;
+            cursor: pointer;
+        }
+
+        .winner-list li .date {
+            font-size: 12px;
+            color: #999;
         }
 
         .highlight {
-            color: #e74c3c;
+            color: red;
             font-weight: bold;
+        }
+
+        .prize-info {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .winners .winner-list {
+            max-height: 200px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mc's Guess the Word for a Prize! (batch 2) 🗣️🔥</h1>
-        <p class="subtext">Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
-        <p class="prize-info">Current Prize: COD POINTS (CP)</p>
-        <input type="text" id="guess" placeholder="Enter your guess here">
-        <button onclick="checkGuess()">Submit</button>
-        <p id="prize"></p>
+        <h1>Mc's Guess the Word for a Prize! 🗣️🔥 (Batch 2)</h1>
+        <p class="subtext">Enter the correct words to release your prize:</p>
+
+        <!-- First Word Input -->
+        <input type="text" id="firstGuess" placeholder="Enter first word">
+        <button onclick="checkFirstWord()">Submit First Word</button>
+
+        <div id="secondWordScreen" style="display:none;">
+            <!-- Second Word Input -->
+            <input type="text" id="secondGuess" placeholder="Guess second word (Clue: noun)">
+            <button onclick="checkSecondWord()">Submit Second Word</button>
+        </div>
+
+        <!-- Winner Screen -->
+        <div id="nameScreen">
+            <input type="text" id="userName" placeholder="Enter your name" required>
+            <button onclick="recordWinner()">Submit Name</button>
+        </div>
+
+        <!-- Redeem Code Message -->
+        <div id="prizeScreen">
+            <p>Congratulations! You've won a prize. To get your code, please email us.</p>
+            <p><strong>Email:</strong> mc.rpg.gamez@gmail.com</p>
+            <p><strong>Subject:</strong> Redeem code</p>
+            <p>Winner proof will also be provided upon request.</p>
+            <p><strong>Screenshot this page to show as proof!</strong></p>
+            <p><strong>Also, download and attach this HTML file in your email to receive the redeem code.</strong></p>
+        </div>
+
+        <!-- Winners List -->
+        <div class="winners">
+            <h3>Winners List (All Events):</h3>
+            <ul class="winner-list" id="winnersList">
+                <!-- Winners will appear here -->
+            </ul>
+        </div>
     </div>
 
-    <div class="winners">
-        <h3>Winners List (All Events)</h3>
-        <ol>
-            <li class="highlight">1.) JD - <span style="font-style: italic;">Used AI</span></li>
-        </ol>
-    </div>
+    <!-- Load the CryptoJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1-crypto-js.min.js"></script>
 
     <script>
-        const shiftValue = 7;
-        const encryptedRandomChar = "QlpoOTFBWSZTWaS7hJ4AABXfgAAQIdgAECohVIAA3EAAAAhD0oPVT9QPU9A0AABBpoNA0aQAAADQ09QA9DQAGjUNBoA0aNA09QA";
-        const encryptedCode = [119, 72, 111, 50, 117, 109, 67, 86, 84, 87, 51, 85, 97, 116];
-        const secretSequence = [42, 91, 63];
-        const correctDecryptionKey = Array.from("hitler").map(char => char.charCodeAt(0));
-
-        function base64Decode(str) {
-            return decodeURIComponent(atob(str).split('').map(c =>
-                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-            ).join(''));
+        // Encrypted Words
+        const firstEncryptedWord = "U2FsdGVkX1+RndAXZ57lyqI35sQuMW2UVRs64tQGIO8j6raYzrptgx8VRpxaOiexuvHv8Ptz5jD6ybsmuZVpTw==";
+        const secondEncryptedWord = "U2FsdGVkX19sXpwpqfSsn5U11JHlwme/x1uWAHQKqsI=";
+        
+        // Decrypt function
+        function decryptWord(encryptedWord) {
+            const decryptedBytes = CryptoJS.AES.decrypt(encryptedWord, 'secretkey');
+            return decryptedBytes.toString(CryptoJS.enc.Utf8);
         }
 
-        function decodeHidden(arr, sequence) {
-            return arr.map((char) => {
-                let result = char;
-                sequence.forEach(num => {
-                    result ^= num;
-                });
-                return String.fromCharCode(result);
-            }).join('');
-        }
+        // Initialize winners with JD in the list
+        let winners = [
+            { name: "JD (used AI)", date: "2025-02-12 12:00:00" } // JD should always be listed first
+        ];
 
-        function complexDecrypt(encStr, key) {
-            let decoded = base64Decode(encStr);
-            let decrypted = "";
+        // Display initial winners list
+        const winnersList = document.getElementById("winnersList");
+        winners.forEach(winner => {
+            const winnerItem = document.createElement("li");
+            winnerItem.innerHTML = `${winner.name} <span class="date">(${winner.date})</span>`;
+            winnersList.appendChild(winnerItem);
+        });
 
-            for (let i = 0; i < decoded.length; i++) {
-                let charCode = decoded.charCodeAt(i);
-                charCode -= shiftValue;
-                charCode ^= key.charCodeAt(i % key.length);
-                decrypted += String.fromCharCode(charCode);
+        // Function to check first word
+        function checkFirstWord() {
+            const userGuess = document.getElementById("firstGuess").value.trim().toLowerCase();
+            const decryptedFirstWord = decryptWord(firstEncryptedWord).toLowerCase();
+
+            if (userGuess === decryptedFirstWord) {
+                alert("Correct first word! Please enter the second word.");
+                document.getElementById("secondWordScreen").style.display = "block";
+            } else {
+                alert("Wrong first word! Try again.");
             }
-            return decrypted;
         }
 
-        function showSelfDestruct() {
-            if (localStorage.getItem('selfDestructed')) return;
-            
-            let countdown = 5;
-            const countdownInterval = setInterval(() => {
-                alert(`Your device will self-destruct in ${countdown}...`);
-                countdown--;
-                if (countdown === 0) {
-                    clearInterval(countdownInterval);
-                    alert("Just kidding! But nice try. 😜");
-                    localStorage.setItem('selfDestructed', true);
-                }
-            }, 1000);
+        // Function to check second word
+        function checkSecondWord() {
+            const userSecondGuess = document.getElementById("secondGuess").value.trim().toLowerCase();
+            const decryptedSecondWord = decryptWord(secondEncryptedWord).toLowerCase();
+
+            if (userSecondGuess === decryptedSecondWord) {
+                alert("Correct second word! Please enter your name to claim your prize.");
+                document.getElementById("secondWordScreen").style.display = "none";
+                document.getElementById("nameScreen").style.display = "block";
+            } else {
+                alert("Wrong second word! Try again.");
+            }
         }
 
-        function checkGuess() {
-            const userGuess = document.getElementById("guess").value.trim().toLowerCase();
-            const userKey = prompt("Guess second word (Clue: noun)");
+        // Function to record winner's name and show prize screen
+        function recordWinner() {
+            const userName = document.getElementById("userName").value.trim();
 
-            const userKeyArr = Array.from(userKey).map(char => char.charCodeAt(0));
+            if (userName) {
+                const winnerDate = new Date().toLocaleString();
+                winners.push({ name: userName, date: winnerDate });
+                alert(`${userName}, you've won a prize!`);
+                document.getElementById("nameScreen").style.display = "none";
+                document.getElementById("prizeScreen").style.display = "block";
 
-            if (JSON.stringify(userKeyArr) !== JSON.stringify(correctDecryptionKey)) {
-                showSelfDestruct();
-                return;
+                // Update Winners List on the page
+                const winnersList = document.getElementById("winnersList");
+                const newWinner = document.createElement("li");
+                newWinner.innerHTML = `${userName} <span class="date">(${winnerDate})</span>`;
+                winnersList.appendChild(newWinner);
+
+                // Trigger the download of the index.html file
+                downloadHTML();
+            } else {
+                alert("Please enter your name.");
             }
+        }
 
-            try {
-                const decryptedRandomChar = complexDecrypt(encryptedRandomChar, userKey);
-
-                if (userGuess === decryptedRandomChar.toLowerCase()) {
-                    const redeemCode = decodeHidden(encryptedCode, secretSequence);
-                    alert(`Congratulations! Your redeem code is: ${redeemCode}`);
-                } else {
-                    alert("Wrong guess! Try again.");
-                }
-            } catch (e) {
-                showSelfDestruct();
-            }
+        // Function to trigger the download of the HTML file
+        function downloadHTML() {
+            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "index.html";
+            link.click();
         }
     </script>
 </body>
