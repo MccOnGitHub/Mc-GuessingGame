@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mc's Guess the Word for a Prize! 🗣️🔥</title>
+    <title>Mc's Guess the Word for a Prize! (batch 2) 🗣️🔥</title>
     <style>
         body {
             display: flex;
@@ -12,6 +12,7 @@
             height: 100vh;
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
+            flex-direction: column;
         }
 
         .container {
@@ -20,6 +21,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
 
         input[type="text"] {
@@ -64,11 +66,29 @@
             font-weight: bold;
             margin-top: 10px;
         }
+
+        .winners {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            text-align: left;
+        }
+
+        .winners h3 {
+            text-align: center;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Mc's Guess the Word for a Prize! 🗣️🔥(Second Batch!)</h1>
+        <h1>Mc's Guess the Word for a Prize! (batch 2) 🗣️🔥</h1>
         <p class="subtext">Oh ano g kaba? libre na to oh! enter the correct word to release the prize lolol:</p>
         <p class="prize-info">Current Prize: COD POINTS (CP)</p>
         <input type="text" id="guess" placeholder="Enter your guess here">
@@ -76,11 +96,18 @@
         <p id="prize"></p>
     </div>
 
+    <div class="winners">
+        <h3>Winners List (Batch 2)</h3>
+        <ol>
+            <li class="highlight">1.) JD - <span style="font-style: italic;">Used AI</span></li>
+        </ol>
+    </div>
+
     <script>
         const shiftValue = 7;
-        const xorKeys = [42, 91, 63];
         const encryptedRandomChar = "QlpoOTFBWSZTWaS7hJ4AABXfgAAQIdgAECohVIAA3EAAAAhD0oPVT9QPU9A0AABBpoNA0aQAAADQ09QA9DQAGjUNBoA0aNA09QA";
         const encryptedCode = [119, 72, 111, 50, 117, 109, 67, 86, 84, 87, 51, 85, 97, 116];
+        const secretSequence = [42, 91, 63];
 
         function base64Decode(str) {
             return decodeURIComponent(atob(str).split('').map(c =>
@@ -88,11 +115,11 @@
             ).join(''));
         }
 
-        function tripleXORDecrypt(arr, keys) {
+        function decodeHidden(arr, sequence) {
             return arr.map((char) => {
                 let result = char;
-                keys.forEach(key => {
-                    result ^= key;
+                sequence.forEach(num => {
+                    result ^= num;
                 });
                 return String.fromCharCode(result);
             }).join('');
@@ -123,9 +150,8 @@
                     alert("Just kidding! But nice try. 😜");
                     localStorage.setItem('selfDestructed', true);
 
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                     const redirectUrl = "https://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
-                    window.location.href = isMobile ? redirectUrl : redirectUrl;
+                    window.open(redirectUrl, '_blank');
                 }
             }, 1000);
         }
@@ -138,10 +164,11 @@
                 const decryptedRandomChar = complexDecrypt(encryptedRandomChar, userKey);
 
                 if (userGuess === decryptedRandomChar.toLowerCase()) {
-                    const redeemCode = tripleXORDecrypt(encryptedCode, xorKeys);
+                    const redeemCode = decodeHidden(encryptedCode, secretSequence);
                     localStorage.setItem('redeemCode', redeemCode);
-                    document.getElementById("prize").innerHTML = `Congratulations! Here is your redeem code: <strong>${redeemCode}</strong>`;
-                    document.getElementById("prize").style.display = "block";
+
+                    const redirectUrl = "https://youtu.be/xvFZjo5PgG0?si=iy-ZMfIWZRrrLZhE";
+                    window.open(redirectUrl, '_blank');
                 } else {
                     alert("Wrong guess! Try again.");
                 }
@@ -153,8 +180,7 @@
         window.onload = function() {
             const savedCode = localStorage.getItem('redeemCode');
             if (savedCode) {
-                document.getElementById("prize").innerHTML = `Welcome back! Your redeem code is: <strong>${savedCode}</strong>`;
-                document.getElementById("prize").style.display = "block";
+                alert(`Welcome back! Your redeem code is: ${savedCode}`);
             }
         }
     </script>
