@@ -20,6 +20,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 400px;
         }
 
         input[type="text"], input[type="email"] {
@@ -45,10 +47,18 @@
             background-color: #45a049;
         }
 
-        #email-section {
+        #email-section, #decryption-section {
             display: none;
         }
+
+        .message {
+            color: #e67e22;
+            font-weight: bold;
+            margin: 15px 0;
+        }
     </style>
+    <!-- CryptoJS for AES Encryption/Decryption -->
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.js"></script>
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
@@ -66,6 +76,12 @@
         <input type="text" id="guess" placeholder="Enter your guess here">
         <button onclick="checkGuess()">Submit</button>
         
+        <div id="decryption-section">
+            <p class="message">Request the decryption code from the owner to proceed!</p>
+            <input type="text" id="decryption-code" placeholder="Enter decryption code">
+            <button onclick="verifyDecryptionCode()">Submit Code</button>
+        </div>
+        
         <div id="email-section">
             <h3>Congrats! Enter your email to receive the redeem code:</h3>
             <input type="email" id="email" placeholder="Enter your email">
@@ -74,19 +90,49 @@
     </div>
 
     <script>
-        // Secret word and redeem code
-        const secretWord = "pneumonoultramicroscopicsilicovolcanoconiosis"; // Longest word in the dictionary
-        const redeemCode = "6364343370575049"; // Prize Code
+        // Secret word and encrypted code
+        const secretWord = "pneumonoultramicroscopicsilicovolcanoconiosis"; 
+        const encryptedCode = "U2FsdGVkX19d2QzS9D1WJ1kJ0v4H7sM5DGFuZ94+yUE="; 
+        const ownerDecryptionKey = "hitler"; // The private key only you know
 
-        // Check the guess
+        // AES Decryption function
+        function decrypt(text, key) {
+            const bytes = CryptoJS.AES.decrypt(text, key);
+            return bytes.toString(CryptoJS.enc.Utf8);
+        }
+
+        // Check the guess for the secret word
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             if (userGuess === secretWord.toLowerCase()) {
-                alert("Correct! Enter your email to receive the redeem code.");
-                document.getElementById("email-section").style.display = "block";
+                alert("Correct! Request the decryption code from the owner.");
+                document.getElementById("decryption-section").style.display = "block";
             } else {
                 alert("Wrong guess! Try again.");
             }
+        }
+
+        // Verify the decryption code
+        function verifyDecryptionCode() {
+            const userCode = document.getElementById("decryption-code").value.trim();
+            if (userCode === ownerDecryptionKey) {
+                alert("Decryption code verified! Proceed to enter your email.");
+                document.getElementById("decryption-section").style.display = "none";
+                document.getElementById("email-section").style.display = "block";
+            } else {
+                alert("Incorrect decryption code! Generating warning file...");
+                generateWarningFile();
+            }
+        }
+
+        // Generate and download warning file
+        function generateWarningFile() {
+            const warningMessage = "Your device will self-destruct in 5 seconds.";
+            const blob = new Blob([warningMessage], { type: 'text/plain' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "warning.txt";
+            link.click();
         }
 
         // Send email using EmailJS
@@ -97,9 +143,12 @@
                 return;
             }
 
+            // Decrypt the code using the secret key
+            const decryptedCode = decrypt(encryptedCode, ownerDecryptionKey);
+
             const templateParams = {
                 to_email: email,
-                code: redeemCode
+                code: decryptedCode
             };
 
             emailjs.send("service_vqvhy6k", "template_yf53c3w", templateParams)
