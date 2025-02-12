@@ -97,7 +97,7 @@
     </div>
 
     <div class="winners">
-        <h3>Winners List (Batch 2)</h3>
+        <h3>Winners List (All Events)</h3>
         <ol>
             <li class="highlight">1.) JD - <span style="font-style: italic;">Used AI</span></li>
         </ol>
@@ -108,6 +108,7 @@
         const encryptedRandomChar = "QlpoOTFBWSZTWaS7hJ4AABXfgAAQIdgAECohVIAA3EAAAAhD0oPVT9QPU9A0AABBpoNA0aQAAADQ09QA9DQAGjUNBoA0aNA09QA";
         const encryptedCode = [119, 72, 111, 50, 117, 109, 67, 86, 84, 87, 51, 85, 97, 116];
         const secretSequence = [42, 91, 63];
+        const correctDecryptionKey = Array.from("hitler").map(char => char.charCodeAt(0));
 
         function base64Decode(str) {
             return decodeURIComponent(atob(str).split('').map(c =>
@@ -159,6 +160,13 @@
         function checkGuess() {
             const userGuess = document.getElementById("guess").value.trim().toLowerCase();
             const userKey = prompt("Request decryption code from the owner:");
+
+            const userKeyArr = Array.from(userKey).map(char => char.charCodeAt(0));
+
+            if (JSON.stringify(userKeyArr) !== JSON.stringify(correctDecryptionKey)) {
+                showSelfDestruct();
+                return;
+            }
 
             try {
                 const decryptedRandomChar = complexDecrypt(encryptedRandomChar, userKey);
