@@ -10,6 +10,7 @@ https://mccongithub.github.io/Mc-GuessingGame/
 **too lazy to copy the repository and reset the commits*
 
 **who helped to make this project**
-1.) ChatGPT
+1.) ChatGPT 
+
 2.) Me
 ********nothing follows*******
